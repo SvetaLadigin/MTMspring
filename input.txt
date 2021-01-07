@@ -1,0 +1,9 @@
+inside contest 1 General_Three_Years CS
+inside contest 2 General_Four_Years CS
+inside contest 3 General_Three_Years CS
+techniovision 4 General_Three_Years EE
+staff choice General_Three_Years General_Four_Years Software_Engineering CS
+techniovision 5 General_Three_Years EE
+techniovision 4 General_Three_Years EE
+inside contest 2 General_Four_Years CS
+inside contest 2 General_Four_Years CS
