@@ -1,150 +1,200 @@
 #ifndef EUROVISION_H_
 #define EUROVISION_H_
 
-#include "list.h"
-/**
-* Eurovision program
-*Runs the contest and gets the audience favorite and friendly states
-*
-* The following functions are available:
-*eurovisionCreate                   - Creates a clear eurovision
-eurovisionDestroy                   - Destroys the eurovision
- eurovisionAddState                 - Adds a new state to the contest
- eurovisionRemoveState              - Removes state from the contest
- eurovisionAddJudge                 - Adds a judge to the eurovision
- eurovisionRemoveJudge              - Removes judge from the contest
- eurovisionAddVote                  - Adds a vote to the system
- eurovisionRemoveVote               - Removesa vote to the system
- eurovisionRunContest               - Runs the eurovision contest and returns winners
- eurovisionRunAudienceFavorite      - Returns the top ten winners by the audiance votes
- eurovisionRunGetFriendlyStates     - Checks the states which gave each other 12 points
+#include <iostream>
 
-*/
-/*typedef for the eurovision results*/
-typedef enum eurovisionResult_t {
-    EUROVISION_NULL_ARGUMENT,
-    EUROVISION_OUT_OF_MEMORY,
-    EUROVISION_INVALID_ID,
-    EUROVISION_INVALID_NAME,
-    EUROVISION_STATE_ALREADY_EXIST,
-    EUROVISION_STATE_NOT_EXIST,
-    EUROVISION_JUDGE_ALREADY_EXIST,
-    EUROVISION_JUDGE_NOT_EXIST,
-    EUROVISION_SAME_STATE,
-    EUROVISION_SUCCESS
-} EurovisionResult;
-/**typedef for eurovision struct*/
-typedef struct eurovision_t *Eurovision;
-/**
-* eurovisionCreate: Creates a clear eurovision
-* @return
- * NULL if error.
- * eurovision if success.
-*/
-Eurovision eurovisionCreate();
-/**
-* eurovisionDestroy: destroys the eurovision
- *@param
- * eurovision
-*/
-void eurovisionDestroy(Eurovision eurovision);
-/**
-* eurovisionAddState: adds a new state to the contest
- *@param
- * eurovision - a eurovision to work on
- * stateId - unique ID for the state
- * Pointer to a state stateName and pointer to a state song name
-* @return
- *    EUROVISION_NULL_ARGUMENT - if null was given
-    EUROVISION_INVALID_ID - invaid ID (if not numbers)
-    EUROVISION_INVALID_NAME - if name is not chars
-    EUROVISION_STATE_ALREADY_EXIST - state already exists
-    EUROVISION_SUCCESS - success! A new state was added to the contest
-*/
-EurovisionResult eurovisionAddState(Eurovision eurovision, int stateId,
-                                    const char *stateName,
-                                    const char *songName);
-/**
-* eurovisionRemoveState: removes state from the contest
- *@param
- * relevant eurovision and a stateID to remove
-* @return
- *    EUROVISION_INVALID_ID - if contains chars
-    EUROVISION_STATE_ALREADY_EXIST - if the name is not in the contest
-*/
-EurovisionResult eurovisionRemoveState(Eurovision eurovision, int stateId);
-/**
-* eurovisionAddJudge: Adds a judge to the eurovision
- *@param
- * relevant eurovision, judges ID, Judges name and the judges scores
-* @return
-    EUROVISION_INVALID_ID, - invalid id
-    EUROVISION_INVALID_NAME - name contains special charecters
-    EUROVISION_STATE_NOT_EXIST - state not exist
-    EUROVISION_JUDGE_ALREADY_EXIST - the judge is already in the system
-    EUROVISION_SUCCESS
-*/
-EurovisionResult eurovisionAddJudge(Eurovision eurovision, int judgeId,
-                                    const char *judgeName,
-                                    int *judgeResults);
-/**
-* eurovisionRemoveJudge: removes judge from the contest
- *@param
- * relevant eurovision and a judge's ID
-* @return
- *     EUROVISION_INVALID_ID - invalid name
- *     EUROVISION_JUDGE_NOT_EXIST - invalid judge
- *
-*/
-EurovisionResult eurovisionRemoveJudge(Eurovision eurovision, int judgeId);
-/**
-* eurovisionAddVote: adds a vote to the system
- *@param
- *eurovision to add to, stateID of the voter and stateID to give the vote to
-* @return
-    EUROVISION_INVALID_ID, - invalid eurovision ID
-    EUROVISION_STATE_NOT_EXIST, - state does not exist
-    EUROVISION_SAME_STATE, - the voter wants to vote to his country
-    EUROVISION_SUCCESS - success! vote added to the system
-*/
-EurovisionResult eurovisionAddVote(Eurovision eurovision, int stateGiver,
-                                   int stateTaker);
-/**
-* eurovisionRemoveVote: removesa vote to the system
- *@param
- *eurovision to add to, stateID of the voter and stateID to give the vote to
-* @return
-    EUROVISION_INVALID_ID, - invalid eurovision ID
-    EUROVISION_STATE_NOT_EXIST, - state does not exist
-    EUROVISION_SAME_STATE, - the voter wants to remove vote to his country
-    EUROVISION_SUCCESS - success! vote removed from the system
-*/
-EurovisionResult eurovisionRemoveVote(Eurovision eurovision, int stateGiver,
-                                      int stateTaker);
-/**
-* eurovisionRunContest: runs the eurovision contest and returns winners
- *@param
- * relevant eurovision and the audiance precent
-* @return
- * List of the top ten winner states of the eurovision
-*/
-List eurovisionRunContest(Eurovision eurovision, int audiencePercent);
-/**
-* eurovisionRunAudienceFavorite: returns the top ten winners by the audiance votes
- *@param
- * relevant eurovision
-* @return
- * List of the top ten states which won the eurovision by the audience votes
-*/
-List eurovisionRunAudienceFavorite(Eurovision eurovision);
-/**
-* eurovisionRunGetFriendlyStates: checks the states which gave each other 12 points
- *@param
- * relevant eurovision
-* @return
- * List of the friendly states in lecsycographical order
-*/
-List eurovisionRunGetFriendlyStates(Eurovision eurovision);
+using std::string;
+using std::ostream;
+
+// it's allowed to define here any using statements, according to needs.
+// do NOT define here : using namespace std;
+
+//---------------------------------------------------
+
+enum VoterType { All, Regular, Judge };
+enum Phase { Registration, Contest, Voting };
+
+//---------------------------------------------------
+
+class Participant
+{
+// relevant private members can be defined here, if necessary.
+    string m_state;
+    string m_song;
+    int m_song_len;
+    string m_singer;
+    bool m_is_registered;
+
+public :
+// need to define here possibly c'tr and d'tr and ONLY methods that
+// are mentioned and demonstrated in the test example that has been published.
+// NO OTHER METHODS SHOULD APPEAR HERE.
+
+    Participant(const string &state, const string &song, int song_len, const string &singer);
+
+    // Cannot use default and copy constructor
+    Participant() = delete;
+    Participant(Participant &p) = delete;
+    void operator=(const Participant&) = delete;
+
+    void update(const string &new_song_name, int new_song_len, const string &new_singer);
+    void updateRegistered(bool value);
+
+    string state() const;
+    string song() const;
+    int timeLength() const;
+    string singer() const;
+    bool isRegistered() const;
+// NO friend is allowed here.
+
+};
+
+ostream& operator<<(ostream& o, const Participant& b);
+
+//---------------------------------------------------
 
 
-#endif /* EUROVISION_H_ */
+class Voter
+{
+// relevant private members can be defined here, if necessary.
+    string m_state;
+    VoterType m_type;
+    int m_voted_count;
+
+public :
+    explicit Voter(const string &state, VoterType type=Regular);
+
+    Voter() = delete;
+    Voter(Voter &p) = delete;
+    void operator=(const Voter&) = delete;
+
+    string state() const;
+    VoterType voterType() const;
+    int timesOfVotes() const;
+
+    void operator++();
+    void operator--();
+
+// need to define here possibly c'tr and d'tr and ONLY methods that
+// are mentioned and demonstrated in the test example that has been published.
+// NO OTHER METHODS SHOULD APPEAR HERE.
+
+// NO friend is allowed here.
+
+};
+
+ostream& operator<<(ostream& o, const Voter& v);
+
+// -----------------------------------------------------------
+
+#define MAX_VOTE_STATES 10
+
+struct Vote
+{
+// ALL is public here.
+// need to define ONLY data members and c'tr and d'tr.
+// NO NEED to define anything else.
+    Vote(Voter &voter, const string &state1, const string &state2={},
+            const string &state3={}, const string &state4={},
+         const string &state5={}, const string &state6={},
+         const string &state7={}, const string &state8={},
+         const string &state9={}, const string &state10={});
+
+    Voter &m_voter;
+    string m_state[MAX_VOTE_STATES];
+    int m_number_of_votes;
+};
+
+// -----------------------------------------------------------
+
+#define DEFAULT_SONG_LEN 180
+#define DEFAULT_MAX_PARTICIPANTS 26
+#define DEFAULT_MAX_REGULAR_VOTES 5
+
+class MainControl
+{
+// relevant private members can be defined here, if necessary.
+    Phase m_phase;
+
+    int m_max_song_len;
+    int m_max_participants;
+    int m_max_regular_votes;
+
+    class ParticipantsList;
+
+    class ParticipantNode
+    {
+        ParticipantNode *m_next;
+
+    public:
+        const Participant &participant;
+        int regular_votes;
+        int judge_votes;
+
+        explicit ParticipantNode(const Participant &participant);
+        ~ParticipantNode();
+
+        ParticipantNode* next();
+        const ParticipantNode* next() const;
+
+        friend ParticipantsList;
+    };
+
+    class ParticipantsList
+    {
+    private:
+        ParticipantNode* m_head;
+        int m_length;
+
+        static int compareParticipants(const Participant &p1, const Participant &p2);
+    public:
+
+        ParticipantsList();
+        ~ParticipantsList();
+        void add(const Participant &participant);
+        void remove(const Participant &participant);
+
+        ParticipantNode *getParticipantNode(const string &state);
+        const ParticipantNode *getParticipantNode(const string &state) const;
+
+        ParticipantNode *begin();
+        const ParticipantNode *begin() const;
+        int length() const;
+    };
+
+    ParticipantsList m_participants;
+
+    bool legalVote(const Vote &v) const;
+
+    void printRegistrationStep(ostream &o) const;
+    void printContestStep(ostream &o) const;
+    void printVotingStep(ostream &o) const;
+
+    friend ostream& operator<<(ostream& o, const MainControl& eurovision);
+public :
+    explicit MainControl(int max_song_len=DEFAULT_SONG_LEN, int max_participants=DEFAULT_MAX_PARTICIPANTS,
+            int max_regular_votes=DEFAULT_MAX_REGULAR_VOTES);
+// need to define here possibly c'tr and d'tr and ONLY methods that
+// are mentioned and demonstrated in the test example that has been published.
+// NO OTHER METHODS SHOULD APPEAR HERE.
+
+    void setPhase(Phase new_phase);
+
+    Phase phase() const;
+
+    bool legalParticipant(const Participant &p) const;
+    bool participate(const string &state) const;
+
+    MainControl& operator+=(Participant &p);
+    MainControl& operator-=(Participant &p);
+
+    MainControl& operator+=(Vote &&v);
+    MainControl& operator+=(const Vote &v);
+// Also it's allowed here to define friend.
+};
+
+ostream& operator<<(ostream& o, const MainControl& eurovision);
+
+// -----------------------------------------------------------
+
+#endif

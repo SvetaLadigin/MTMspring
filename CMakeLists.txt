@@ -1,20 +1,21 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.10)
+project(mtm_ex3)
 
-add_executable(DryA Dry/mainA.c)
-add_executable(DryB Dry/mainB.c)
+set(CMAKE_CXX_STANDARD 11)
 
-set(EUROVISION_FILES judge.h state.h state.c judge.c utilities.c utilities.h eurovision.h eurovision.c new_map.c new_map.h)
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic-errors -Werror")
 
-include_directories(. tests)
-
-#link_directories(libmtm/win64)
-link_directories(libmtm/csl3)
-add_link_options(-std=c99 -no-pie)
-
-link_libraries(mtm)
-add_compile_options(-std=c99 -Wall -pedantic-errors -Werror)
-
-add_executable(EurovisionTests tests/test_utilities.h tests/eurovisionTests.c tests/eurovisionTestsMain.c ${EUROVISION_FILES})
-add_executable(MapTests tests/test_utilities.h tests/map_example_test.c map.c map.h)
-add_executable(FacebookTests euro_tests/tests/main.c ${EUROVISION_FILES})
-add_executable(EuroTestFacebook2 tests/eurovisionFunctionalityTests.c ${EUROVISION_FILES})
+add_executable(test1 test1.cpp eurovision.h eurovision.cpp)
+add_executable(face_tests_part1 face_tests_part1/finaltest.cpp
+        face_tests_part1/test1.cpp
+        face_tests_part1/test2.cpp
+        face_tests_part1/test3.cpp
+        face_tests_part1/test4.cpp
+        face_tests_part1/test5.cpp
+        face_tests_part1/test6.cpp
+        face_tests_part1/test7.cpp
+        face_tests_part1/test8.cpp
+        face_tests_part1/test9.cpp
+        face_tests_part1/test10.cpp
+        eurovision.h eurovision.cpp)
+target_include_directories(face_tests_part1 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} face_tests_part1)
